@@ -1,0 +1,13 @@
+FROM golang:1.13 as builder
+WORKDIR .
+COPY ./ .
+RUN CGO_ENABLED=0 GOOS=linux \
+    go build -a -installsuffix cgo -v -o bin/tykgrpcadapter ./src/istio.io/istio/mixer/adapter/tykgrpcadapter/cmd/
+
+FROM alpine:3.8
+RUN apk --no-cache add ca-certificates
+WORKDIR /bin/
+COPY --from=builder /go/bin/tykgrpcadapter .
+ENTRYPOINT [ "/bin/tykgrpcadapter" ]
+CMD [ "5000" ]
+EXPOSE 5000
