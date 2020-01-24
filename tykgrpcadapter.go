@@ -56,27 +56,6 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 		}
 	}
 
-	decodeValue := func(in interface{}) interface{} {
-		switch t := in.(type) {
-		case *policy.Value_StringValue:
-			return t.StringValue
-		case *policy.Value_Int64Value:
-			return t.Int64Value
-		case *policy.Value_DoubleValue:
-			return t.DoubleValue
-		default:
-			return fmt.Sprintf("%v", in)
-		}
-	}
-
-	decodeValueMap := func(in map[string]*policy.Value) map[string]interface{} {
-		out := make(map[string]interface{}, len(in))
-		for k, v := range in {
-			out[k] = decodeValue(v.GetValue())
-		}
-		return out
-	}
-
 	props := decodeValueMap(r.Instance.Subject.Properties)
 	log.Infof("%v", props)
 
@@ -140,10 +119,8 @@ func (s *TykGrpcAdapter) Close() error {
 
 // NewTykGrpcAdapter creates a new IBP adapter that listens at provided port.
 func NewTykGrpcAdapter(addr string) (Server, error) {
-	if addr == "" {
-		addr = "0"
-	}
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", addr))
+
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s", "localhost:5000"))
 	if err != nil {
 		return nil, fmt.Errorf("unable to listen on socket: %v", err)
 	}
@@ -154,4 +131,25 @@ func NewTykGrpcAdapter(addr string) (Server, error) {
 	s.server = grpc.NewServer()
 	authorization.RegisterHandleAuthorizationServiceServer(s.server, s)
 	return s, nil
+}
+
+func decodeValueMap(in map[string]*policy.Value) map[string]interface{} {
+	out := make(map[string]interface{}, len(in))
+	for k, v := range in {
+		out[k] = decodeValue(v.GetValue())
+	}
+	return out
+}
+
+func decodeValue(in interface{}) interface{} {
+	switch t := in.(type) {
+	case *policy.Value_StringValue:
+		return t.StringValue
+	case *policy.Value_Int64Value:
+		return t.Int64Value
+	case *policy.Value_DoubleValue:
+		return t.DoubleValue
+	default:
+		return fmt.Sprintf("%v", in)
+	}
 }
