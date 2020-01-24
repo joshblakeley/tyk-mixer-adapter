@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+// config for Tykgrpcadapter
+package adapter.tykgrpcadapter.config;
+
+import "gogoproto/gogo.proto";
+
+option go_package="config";
+
+// config for tykgrpcadapter
+message Params {
+    // Path of the gateway instance to send the apikey to
+    string gateway_url = 1;
+}
