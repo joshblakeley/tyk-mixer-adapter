@@ -1,35 +1,13 @@
 # tyk-mixer-adapter
 Custom Istio Mixer Authorization Adapter For Policy Enforcement Using Tyk API Gateway
 
-+-----------------------------+
-|                             |
-|                             |            +----------------+
-|                             |            |                |
-|                             |            |                |
-|                             |            |   Mixer        |  Istio coducts its
-|       Istio                 +------------+                |  policy enforcement
-|       Service               |            |                |  via Mixer component
-|       Mesh                  |            |                |
-|                             |            +--------+-------+
-|                             |                     |
-|                             |            +--------+-------+
-|                             |            |                |  Mixer calls Tyk
-|                             |            |  Tyk Adapter   |  adapter
-|                             |            |                |
-|                             |            +--------+-------+
-|                             |                     |
-|                             |                     |
-|                             |                     |
-|                             |            +--------+-------+
-|                             |            |                |
-+-----------------------------+            |                |  Tyk can enforce access control
-                                           |    Tyk         |  quotas and rate limiting on a
-                                           |                |  per service and per method
-                                           |                |  basis.
-                                           |                |
-                                           +----------------+
 
+## How it works
 
+Service to service policies will be offloaded to mixer which then invokes the Tyk Istio Mixer Adapter.
+Tyk API Gateway can then action access control, rate limiting and quotas for several different authentication scenarios based on receiving an API Key, target service path and method (also other important data such as version).
+You get a choice of bearer token or JWT to start with - in theory Oauth2 and OIDC will also be possible but need testing.
+Tyk will be able to give access denial or an ok signal to Mixer to control the mesh traffic.
 
 ## Prerequsites
 
