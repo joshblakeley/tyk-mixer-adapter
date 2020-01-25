@@ -7,9 +7,14 @@ package tykgrpcadapter
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"google.golang.org/grpc/credentials"
+	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 
 	"istio.io/istio/mixer/pkg/status"
 	"istio.io/istio/mixer/template/authorization"
@@ -36,6 +41,8 @@ type (
 		server   *grpc.Server
 	}
 )
+
+// TODO: Utilise analytics template to send analytics record directly to Redis so we get Istio metrics in Tyk Dashboard
 
 var _ authorization.HandleAuthorizationServiceServer = &TykGrpcAdapter{}
 
@@ -70,6 +77,7 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 	}
 
 	//send auth key to gateway
+	// TODO: Mutual TLS for connection to Tyk Gateway
 	client := &http.Client{}
 	log.Infof("Calling Tyk api on: ", cfg.GetGatewayUrl()+"/mixertestapi/")
 	req, _ := http.NewRequest("GET", cfg.GetGatewayUrl()+"/mixertestapi/", nil)
@@ -117,7 +125,36 @@ func (s *TykGrpcAdapter) Close() error {
 	return nil
 }
 
-// NewTykGrpcAdapter creates a new IBP adapter that listens at provided port.
+func getServerTLSOption(credential, privateKey, caCertificate string) (grpc.ServerOption, error) {
+	certificate, err := tls.LoadX509KeyPair(
+		credential,
+		privateKey,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load key cert pair")
+	}
+	certPool := x509.NewCertPool()
+	bs, err := ioutil.ReadFile(caCertificate)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read client ca cert: %s", err)
+	}
+
+	ok := certPool.AppendCertsFromPEM(bs)
+	if !ok {
+		return nil, fmt.Errorf("failed to append client certs")
+	}
+
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{certificate},
+		ClientCAs:    certPool,
+	}
+	tlsConfig.ClientAuth = tls.RequireAndVerifyClientCert
+
+	return grpc.Creds(credentials.NewTLS(tlsConfig)), nil
+}
+
+// NewTykGrpcAdapter creates a new adapter that listens at port 5000
+// TODO: port and probally some other things should be configurable from config
 func NewTykGrpcAdapter(addr string) (Server, error) {
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s", "localhost:5000"))
@@ -128,8 +165,21 @@ func NewTykGrpcAdapter(addr string) (Server, error) {
 		listener: listener,
 	}
 	fmt.Printf("listening on \"%v\"\n", s.Addr())
-	s.server = grpc.NewServer()
+
+	credential := os.Getenv("TYK_GRPC_ADAPTER_CREDENTIAL")
+	privateKey := os.Getenv("TYK_GRPC_ADAPTER_PRIVATE_KEY")
+	certificate := os.Getenv("TYK_GRPC_ADAPTER_CERTIFICATE")
+	if credential != "" {
+		so, err := getServerTLSOption(credential, privateKey, certificate)
+		if err != nil {
+			return nil, err
+		}
+		s.server = grpc.NewServer(so)
+	} else {
+		s.server = grpc.NewServer()
+	}
 	authorization.RegisterHandleAuthorizationServiceServer(s.server, s)
+
 	return s, nil
 }
 
