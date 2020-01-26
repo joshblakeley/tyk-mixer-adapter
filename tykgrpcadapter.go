@@ -10,11 +10,12 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"google.golang.org/grpc/credentials"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
+
+	"google.golang.org/grpc/credentials"
 
 	"istio.io/istio/mixer/pkg/status"
 	"istio.io/istio/mixer/template/authorization"
@@ -67,6 +68,7 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 	log.Infof("%v", props)
 
 	//dont have header we want so fail
+	// TODO: different failure response for different codes i.e. 500/400/404 etc
 	value, ok := props["custom_token_header"]
 	log.Infof("Header value: ", value)
 	if !ok {
@@ -76,10 +78,17 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 		}, nil
 	}
 
-	//send auth key to gateway
+	log.Infof("Actions: Method: %v\n Namespace: %v\n Destination Service: %v\n Path: %v",
+		r.Instance.Action.Method,
+		r.Instance.Action.Namespace,
+		r.Instance.Action.Service,
+		r.Instance.Action.Path)
+
+	//send auth key to gateway on the service path
+	//TODO: decide mapping for service to Tyk API - per api or per path implementation on single API?
 	// TODO: Mutual TLS for connection to Tyk Gateway
 	client := &http.Client{}
-	log.Infof("Calling Tyk api on: ", cfg.GetGatewayUrl()+"/mixertestapi/")
+	log.Debugf("Calling Tyk api on: ", cfg.GetGatewayUrl()+"/mixertestapi/")
 	req, _ := http.NewRequest("GET", cfg.GetGatewayUrl()+"/mixertestapi/", nil)
 	req.Header.Set("x-tyk-token", value.(string))
 	resp, err := client.Do(req)
