@@ -7,15 +7,13 @@ ENV GO111MODULE=on \
 COPY . /app
 WORKDIR /app
 
-# Copy and download dependency using go mod
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-# Copy the code into the container
 COPY . .
 
-RUN go build -a -installsuffix cgo -v -o /app/tykgrpcadapter
+RUN go build -a -installsuffix cgo -v -o /app/tykgrpcadapter github.com/joshblakeley/tyk-mixer-adapter/cmd
 
 FROM alpine:3.11
 COPY --from=builder /app/tykgrpcadapter /app/
