@@ -1,11 +1,13 @@
-package main
+package cmd
 
 import (
 	"fmt"
 	"os"
 
-	tykgrpcadapter "github.com/joshblakeley/tyk-mixer-adapter"
-)
+	adapter "github.com/joshblakeley/tyk-mixer-adapter"
+
+
+	)
 
 func main() {
 	addr := ""
@@ -13,7 +15,7 @@ func main() {
 		addr = os.Args[1]
 	}
 
-	s, err := tykgrpcadapter.NewTykGrpcAdapter(addr)
+	s, err := adapter.NewTykGrpcAdapter(addr)
 	if err != nil {
 		fmt.Printf("unable to start server: %v", err)
 		os.Exit(-1)

@@ -4,7 +4,7 @@ ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
-
+COPY . /app
 WORKDIR /app
 
 # Copy and download dependency using go mod
@@ -15,9 +15,9 @@ RUN go mod download
 # Copy the code into the container
 COPY . .
 
-RUN go build -a -installsuffix cgo -v
+RUN go build -a -installsuffix cgo -v -o /app/tykgrpcadapter
 
 FROM alpine:3.11
-COPY --from=builder /app/tykgrpcadapter/ /app/
+COPY --from=builder /app/tykgrpcadapter /app/
 EXPOSE 5000
 ENTRYPOINT [ "/app/tykgrpcadapter" ]
