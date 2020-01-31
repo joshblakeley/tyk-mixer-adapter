@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"istio.io/istio/mixer/adapter/tykgrpcadapter"
+	tykgrpcadapter "github.com/joshblakeley/tyk-mixer-adapter"
 )
 
 func main() {

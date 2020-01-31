@@ -11,6 +11,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"istio.io/istio/mixer/pkg/adapter"
 	"net"
 	"net/http"
 	"os"
@@ -70,7 +71,7 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 	//dont have header we want so fail
 	// TODO: different failure response for different codes i.e. 500/400/404 etc
 	value, ok := props["custom_token_header"]
-	log.Infof("Header value: ", value)
+	log.Infof("Header value: %v", value)
 	if !ok {
 		log.Infof("No authorization header present")
 		return &v1beta1.CheckResult{
@@ -88,17 +89,17 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 	//TODO: decide mapping for service to Tyk API - per api or per path implementation on single API?
 	// TODO: Mutual TLS for connection to Tyk Gateway
 	client := &http.Client{}
-	log.Debugf("Calling Tyk api on: ", cfg.GetGatewayUrl()+"/mixertestapi/")
+	log.Debugf("Calling Tyk api on: %v", cfg.GetGatewayUrl()+"/mixertestapi/")
 	req, _ := http.NewRequest("GET", cfg.GetGatewayUrl()+"/mixertestapi/", nil)
 	req.Header.Set("x-tyk-token", value.(string))
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Errorf("error sending request to Tyk gateway", err)
+		log.Errorf("error sending request to Tyk gateway: %v", err)
 		return &v1beta1.CheckResult{
 			Status: status.WithPermissionDenied("Unauthorized..."),
 		}, nil
 	}
-	log.Infof("StatusCodeFromTyk: ", resp.StatusCode)
+	log.Infof("StatusCodeFromTyk: %v", resp.StatusCode)
 	//good request send back an ok
 	if resp.StatusCode == 200 {
 		return &v1beta1.CheckResult{
@@ -211,4 +212,8 @@ func decodeValue(in interface{}) interface{} {
 	default:
 		return fmt.Sprintf("%v", in)
 	}
+}
+
+func GetInfo() (info adapter.Info){
+	return info
 }

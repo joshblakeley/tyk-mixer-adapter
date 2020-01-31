@@ -24,10 +24,10 @@ spec:
      properties:
        custom_token_header:  request.headers["x-tyk-token"]
    action:
-     namespace: destination.namespace | "default"
-     service: destination.service.host | ""
-     path: request.path | "/"
-     method: request.method | "post"
+     namespace: destination.namespace
+     service: destination.service.host
+     path: request.path
+     method: request.method
 
 ---
 
