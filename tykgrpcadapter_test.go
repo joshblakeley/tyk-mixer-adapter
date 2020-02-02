@@ -1,14 +1,35 @@
 package tykgrpcadapter
 
 import (
+	tyk "github.com/TykTechnologies/tyk/gateway"
+	"github.com/TykTechnologies/tyk/user"
 	"io/ioutil"
-	"testing"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
+	"testing"
 )
 
 
 func TestCheck(t *testing.T) {
+
+	//setup Tyk Server and API
+	defer tyk.ResetTestConfig()
+	ts := tyk.StartTest()
+	defer ts.Close()
+
+	tyk.BuildAndLoadAPI(func(spec *tyk.APISpec) {
+		spec.Name = "test"
+		spec.APIID = "test"
+		spec.Proxy.ListenPath = "/mixerapi/"
+		spec.UseKeylessAccess = false
+	})
+	//create valid auth token and pass to mixer client below
+	_, knownKey := ts.CreateSession(func(s *user.SessionState) {
+		s.AccessRights = map[string]user.AccessDefinition{"test": {
+			APIID: "test",
+		}}
+	})
+
 	adptCrBytes, err := ioutil.ReadFile("config/tykgrpcadapter.yaml")
 	if err != nil {
 		t.Fatalf("could not read file: %v", err)
@@ -44,9 +65,9 @@ func TestCheck(t *testing.T) {
 				{
 					CallKind: adapter_integration.CHECK,
 					Attrs:    map[string]interface{}{
-						"request.headers": map[string]string{"x-tyk-token": "eyJvcmciOiI1ZTJhY2M0ODk2MjUzZmNiMzc1ODVmNTEiLCJpZCI6ImJkMWQ0YjQ2ZTUzMDRiYmFhODRiZjczNWVjMjk5YmI1IiwiaCI6Im11cm11cjY0In0="},
+						"request.headers": map[string]string{"x-tyk-token": knownKey},
 						"destination.namespace": "default",
-						"destination.service.host": "test",
+						"destination.service.host": "mixerapi",
 						"request.path": "/",
 						"request.method": "GET"},
 				},
@@ -79,6 +100,11 @@ func TestCheck(t *testing.T) {
 		},
 	)
 }
+
+
+
+
+
 
 //func normalize(s string) string {
 //	s = strings.TrimSpace(s)

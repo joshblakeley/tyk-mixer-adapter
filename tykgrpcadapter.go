@@ -79,24 +79,27 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 		}, nil
 	}
 
-	log.Infof("Actions: Method: %v\n Namespace: %v\n Destination Service: %v\n Path: %v",
-		r.Instance.Action.Method,
-		r.Instance.Action.Namespace,
-		r.Instance.Action.Service,
-		r.Instance.Action.Path)
+	//log.Debugf("Actions: Method: %v\n Namespace: %v\n Destination Service: %v\n Path: %v",
+	//	r.Instance.Action.Method,
+	//	r.Instance.Action.Namespace,
+	//	r.Instance.Action.Service,
+	//	r.Instance.Action.Path)
 
 	//send auth key to gateway on the service path
-	//TODO: decide mapping for service to Tyk API - per api or per path implementation on single API?
 	// TODO: Mutual TLS for connection to Tyk Gateway
 	client := &http.Client{}
-	log.Debugf("Calling Tyk api on: %v", cfg.GetGatewayUrl()+"/mixertestapi/")
-	req, _ := http.NewRequest("GET", cfg.GetGatewayUrl()+"/mixertestapi/", nil)
+	log.Debugf("Calling Tyk api on: %v", cfg.GetGatewayUrl()+"/" + r.Instance.Action.Service)
+
+	req, _ := http.NewRequest("GET",
+		cfg.GetGatewayUrl()+"/" + r.Instance.Action.Service + r.Instance.Action.Path,
+		nil)
+	//TODO: pass custom header in x-tyk-token field with value defined in config
 	req.Header.Set("x-tyk-token", value.(string))
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Errorf("error sending request to Tyk gateway: %v", err)
 		return &v1beta1.CheckResult{
-			Status: status.WithPermissionDenied("Unauthorized..."),
+			Status: status.WithPermissionDenied("Error calling Tyk Gateway"),
 		}, nil
 	}
 	log.Infof("StatusCodeFromTyk: %v", resp.StatusCode)
@@ -107,7 +110,7 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 		}, nil
 	}
 	return &v1beta1.CheckResult{
-		Status: status.WithPermissionDenied("Unauthorized..."),
+		Status: status.WithPermissionDenied("Error Calling Tyk Gateway"),
 	}, nil
 
 }
@@ -167,7 +170,7 @@ func getServerTLSOption(credential, privateKey, caCertificate string) (grpc.Serv
 // TODO: port and probally some other things should be configurable from config
 func NewTykGrpcAdapter(addr string) (Server, error) {
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s", "localhost:5000"))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s", ":5000"))
 	if err != nil {
 		return nil, fmt.Errorf("unable to listen on socket: %v", err)
 	}
