@@ -88,7 +88,7 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 	//send auth key to gateway on the service path
 	// TODO: Mutual TLS for connection to Tyk Gateway
 	client := &http.Client{}
-	log.Debugf("Calling Tyk api on: %v", cfg.GetGatewayUrl()+"/" + r.Instance.Action.Service)
+	log.Infof("Calling Tyk api on: %s", cfg.GetGatewayUrl()+ "/" + r.Instance.Action.Service + r.Instance.Action.Path)
 
 	req, _ := http.NewRequest("GET",
 		cfg.GetGatewayUrl()+"/" + r.Instance.Action.Service + r.Instance.Action.Path,
