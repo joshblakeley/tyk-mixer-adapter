@@ -99,11 +99,13 @@ First setup the attributes maps and deploy them from the cloned repo:
 
 `kubectl apply -f testdata/attributes.yaml -f testdata/template.yaml`
 
-`kubectl apply -f /adapter/mygrpcadapter/testdata/mygrpcadapter.yaml`
+Deploy the state for the adapter
+
+`kubectl apply -f testdata/tykgrpcadapter.yaml`
 
 
 Deploy the config:
-`kubectl apply -f $MIXER_REPO/adapter/mygrpcadapter/testdata/sample_operator_cfg.yaml`
+`kubectl apply -f testdata/sample_operator_cfg.yaml`
 
 
 you should now see a connection established on the mixer logs:
