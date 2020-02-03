@@ -9,7 +9,7 @@ spec:
   connection: 
     address: "localhost:5000"
   params: 
-    gateway_url: "http://localhost:8080"
+    gateway_url: "https://josh-hybrid1.cloud.tyk.io"
 
 ---
 apiVersion: "config.istio.io/v1alpha2"
