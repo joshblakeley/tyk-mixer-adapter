@@ -10,8 +10,8 @@ spec:
   ports:
     - name: grpc
       protocol: TCP
-      port: 5000
-      targetPort: 5000
+      port: 9999
+      targetPort: 9999
   selector:
     app: tykgrpcadapter
 ---
@@ -37,4 +37,4 @@ spec:
           image: joshtyk/tyk-istio-adapter
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - containerPort: 9999

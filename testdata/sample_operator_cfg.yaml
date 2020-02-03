@@ -7,9 +7,9 @@ metadata:
 spec: 
   adapter: tykgrpcadapter
   connection: 
-    address: "localhost:5000"
+    address: "localhost:9999"
   params: 
-    gateway_url: "https://josh-hybrid1.cloud.tyk.io"
+    gateway_url: "https://{GATEWAY_URL}:{GATEWAY_PORT}"
 
 ---
 apiVersion: "config.istio.io/v1alpha2"
