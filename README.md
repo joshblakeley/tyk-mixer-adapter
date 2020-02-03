@@ -122,3 +122,16 @@ $ kubectl -n istio-system logs $(kubectl -n istio-system get pods -lapp=mixer -o
 
 1. Check tyk dashboard for Analytics data relating to the calls to your setup APIs
 2. Check adapter logs for returned codes from tyk and details about what endpoints the adapter is trying to call in Tyk.
+
+
+
+
+# References
+
+https://istio.io/docs/concepts/policies-and-telemetry/#adapters
+https://github.com/salrashid123/istio_custom_auth_adapter 
+https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Walkthrough
+https://venilnoronha.io/set-sail-a-production-ready-istio-adapter
+https://istio.io/help/ops/setup/validation/
+
+
