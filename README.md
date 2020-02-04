@@ -99,24 +99,39 @@ First setup the attributes maps and deploy them from the cloned repo:
 
 `kubectl apply -f testdata/attributes.yaml -f testdata/template.yaml`
 
-`kubectl apply -f /adapter/mygrpcadapter/testdata/mygrpcadapter.yaml`
+Deploy the state for the adapter
+
+`kubectl apply -f testdata/tykgrpcadapter.yaml`
 
 
 Deploy the config:
-`kubectl apply -f $MIXER_REPO/adapter/mygrpcadapter/testdata/sample_operator_cfg.yaml`
+`kubectl apply -f testdata/sample_operator_cfg.yaml`
 
 
 you should now see a connection established on the mixer logs:
 ```
 $ kubectl -n istio-system logs $(kubectl -n istio-system get pods -lapp=mixer -o jsonpath='{.items[0].metadata.name}') -c mixer
-2018-12-12T17:59:49.249312Z	info	grpcAdapter	Connected to: tykgrpcadapterservice:5000
-2018-12-12T17:59:49.249433Z	info	ccResolverWrapper: sending new addresses to cc: [{tykgrpcadapterservice:5000 0  <nil>}]
-2018-12-12T17:59:49.249591Z	info	ClientConn switching balancer to "pick_first"
-2018-12-12T17:59:49.249758Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, CONNECTING
-2018-12-12T17:59:49.251833Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, READY
+2020-01-28T17:59:49.249312Z	info	grpcAdapter	Connected to: tykgrpcadapterservice:5000
+2020-01-28T17:59:49.249312Z	info	ccResolverWrapper: sending new addresses to cc: [{tykgrpcadapterservice:5000 0  <nil>}]
+2020-01-28T17:59:49.249312Z	info	ClientConn switching balancer to "pick_first"
+2020-01-28T17:59:49.249312Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, CONNECTING
+2020-01-28T17:59:49.249312Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, READY
 ```
 
 ## Validate things are working
 
 1. Check tyk dashboard for Analytics data relating to the calls to your setup APIs
 2. Check adapter logs for returned codes from tyk and details about what endpoints the adapter is trying to call in Tyk.
+
+
+
+
+# References
+
+https://istio.io/docs/concepts/policies-and-telemetry/#adapters
+https://github.com/salrashid123/istio_custom_auth_adapter 
+https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Walkthrough
+https://venilnoronha.io/set-sail-a-production-ready-istio-adapter
+https://istio.io/help/ops/setup/validation/
+
+
