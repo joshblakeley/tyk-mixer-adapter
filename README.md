@@ -111,11 +111,11 @@ Deploy the config:
 you should now see a connection established on the mixer logs:
 ```
 $ kubectl -n istio-system logs $(kubectl -n istio-system get pods -lapp=mixer -o jsonpath='{.items[0].metadata.name}') -c mixer
-2018-12-12T17:59:49.249312Z	info	grpcAdapter	Connected to: tykgrpcadapterservice:5000
-2018-12-12T17:59:49.249433Z	info	ccResolverWrapper: sending new addresses to cc: [{tykgrpcadapterservice:5000 0  <nil>}]
-2018-12-12T17:59:49.249591Z	info	ClientConn switching balancer to "pick_first"
-2018-12-12T17:59:49.249758Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, CONNECTING
-2018-12-12T17:59:49.251833Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, READY
+2020-01-28T17:59:49.249312Z	info	grpcAdapter	Connected to: tykgrpcadapterservice:5000
+2020-01-28T17:59:49.249312Z	info	ccResolverWrapper: sending new addresses to cc: [{tykgrpcadapterservice:5000 0  <nil>}]
+2020-01-28T17:59:49.249312Z	info	ClientConn switching balancer to "pick_first"
+2020-01-28T17:59:49.249312Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, CONNECTING
+2020-01-28T17:59:49.249312Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, READY
 ```
 
 ## Validate things are working
