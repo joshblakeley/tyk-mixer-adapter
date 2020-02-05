@@ -1,10 +1,8 @@
 package adapter
 
 import (
-	tyk "github.com/TykTechnologies/tyk/gateway"
-	"github.com/TykTechnologies/tyk/user"
+	"github.com/apigee/istio-mixer-adapter/adapter"
 	"io/ioutil"
-	" github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
 	"testing"
@@ -13,23 +11,23 @@ import (
 
 func TestCheck(t *testing.T) {
 
-	//setup Tyk Server and API
-	defer tyk.ResetTestConfig()
-	ts := tyk.StartTest()
-	defer ts.Close()
-
-	tyk.BuildAndLoadAPI(func(spec *tyk.APISpec) {
-		spec.Name = "test"
-		spec.APIID = "test"
-		spec.Proxy.ListenPath = "/mixerapi/"
-		spec.UseKeylessAccess = false
-	})
-	//create valid auth token and pass to mixer client below
-	_, knownKey := ts.CreateSession(func(s *user.SessionState) {
-		s.AccessRights = map[string]user.AccessDefinition{"test": {
-			APIID: "test",
-		}}
-	})
+	////setup Tyk Server and API
+	//defer tyk.ResetTestConfig()
+	//ts := tyk.StartTest()
+	//defer ts.Close()
+	//
+	//tyk.BuildAndLoadAPI(func(spec *tyk.APISpec) {
+	//	spec.Name = "test"
+	//	spec.APIID = "test"
+	//	spec.Proxy.ListenPath = "/mixerapi/"
+	//	spec.UseKeylessAccess = false
+	//})
+	////create valid auth token and pass to mixer client below
+	//_, knownKey := ts.CreateSession(func(s *user.SessionState) {
+	//	s.AccessRights = map[string]user.AccessDefinition{"test": {
+	//		APIID: "test",
+	//	}}
+	//})
 
 	adptCrBytes, err := ioutil.ReadFile("config/tykgrpcadapter.yaml")
 	if err != nil {
@@ -48,7 +46,7 @@ func TestCheck(t *testing.T) {
 		nil,
 		adapter_integration.Scenario{
 			Setup: func() (ctx interface{}, err error) {
-				pServer, err := adapter.NewTykGrpcAdapter("")
+				pServer, err := NewTykGrpcAdapter("")
 				if err != nil {
 					return nil, err
 				}
@@ -66,7 +64,7 @@ func TestCheck(t *testing.T) {
 				{
 					CallKind: adapter_integration.CHECK,
 					Attrs:    map[string]interface{}{
-						"request.headers": map[string]string{"x-tyk-token": knownKey},
+						"request.headers": map[string]string{"x-tyk-token": ""},
 						"destination.namespace": "default",
 						"destination.service.host": "mixerapi",
 						"request.path": "/",

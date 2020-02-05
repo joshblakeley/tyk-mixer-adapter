@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
-
-
 	)
 
 func main() {
