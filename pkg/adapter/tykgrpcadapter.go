@@ -10,6 +10,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/joshblakeley/tyk-mixer-adapter/pkg/config"
 	"google.golang.org/grpc/credentials"
 	"io"
 	"io/ioutil"
@@ -25,7 +26,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/joshblakeley/tyk-mixer-adapter/pkg/config"
 	"istio.io/api/mixer/adapter/model/v1beta1"
 	policy "istio.io/api/policy/v1beta1"
 )

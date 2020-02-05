@@ -4,7 +4,6 @@ import (
 	tyk "github.com/TykTechnologies/tyk/gateway"
 	"github.com/TykTechnologies/tyk/user"
 	"io/ioutil"
-	" github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
 	"testing"
