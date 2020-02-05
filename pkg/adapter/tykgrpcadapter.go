@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc/credentials"
 	"io"
 	"io/ioutil"
-	"istio.io/istio/mixer/pkg/adapter"
 	"net"
 	"net/http"
 	"os"
@@ -238,6 +237,3 @@ func decodeValue(in interface{}) interface{} {
 	}
 }
 
-func GetInfo() (info adapter.Info){
-	return info
-}

@@ -1,7 +1,6 @@
 package adapter
 
 import (
-	"github.com/apigee/istio-mixer-adapter/adapter"
 	"io/ioutil"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
@@ -51,14 +50,14 @@ func TestCheck(t *testing.T) {
 					return nil, err
 				}
 				go func() {
-					Run(shutdown)
+					pServer.Run(shutdown)
 					_ = <-shutdown
 				}()
 				return pServer, nil
 			},
 			Teardown: func(ctx interface{}) {
-				s := ctx.(adapter.Server)
-				Close()
+				s := ctx.(Server)
+				s.Close()
 			},
 			ParallelCalls: []adapter_integration.Call{
 				{
@@ -72,12 +71,12 @@ func TestCheck(t *testing.T) {
 				},
 			},
 			GetConfig: func(ctx interface{}) ([]string, error) {
-				s := ctx.(adapter.Server)
+				s := ctx.(Server)
 				return []string{
 					// CRs for built-in templates (authorization is what we need for this test)
 					// are automatically added by the integration test framework.
 					string(adptCrBytes),
-					strings.Replace(operatorCfg, "{ADDRESS}", Addr(), 1),
+					strings.Replace(operatorCfg, "{ADDRESS}", s.Addr(), 1),
 				}, nil
 			},
 			Want: `

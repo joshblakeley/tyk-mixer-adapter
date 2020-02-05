@@ -13,7 +13,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -a -installsuffix cgo -v -o /app/tykgrpcadapter github.com/joshblakeley/tyk-mixer-adapter/cmd
+RUN go build -a -installsuffix cgo -v -o /app/tykgrpcadapter github.com/joshblakeley/tyk-mixer-adapter/pkg/cmd
 
 FROM alpine:3.11
 COPY --from=builder /app/tykgrpcadapter /app/
