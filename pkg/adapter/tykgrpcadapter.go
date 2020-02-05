@@ -25,7 +25,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/joshblakeley/tyk-mixer-adapter/config"
+	"github.com/joshblakeley/tyk-mixer-adapter/pkg/config"
 	"istio.io/api/mixer/adapter/model/v1beta1"
 	policy "istio.io/api/policy/v1beta1"
 )

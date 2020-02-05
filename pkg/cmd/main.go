@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	adapter "github.com/joshblakeley/tyk-mixer-adapter"
+	"github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 
 
 	)

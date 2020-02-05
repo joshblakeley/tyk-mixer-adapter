@@ -1,10 +1,10 @@
-package adaptertest
+package adapter
 
 import (
 	tyk "github.com/TykTechnologies/tyk/gateway"
 	"github.com/TykTechnologies/tyk/user"
 	"io/ioutil"
-	"istio.io/istio/mixer/adapter/tykgrpcadapter/pkg/adapter"
+	" github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
 	"testing"
