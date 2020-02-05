@@ -1,9 +1,10 @@
-package tykgrpcadapter
+package adaptertest
 
 import (
 	tyk "github.com/TykTechnologies/tyk/gateway"
 	"github.com/TykTechnologies/tyk/user"
 	"io/ioutil"
+	"istio.io/istio/mixer/adapter/tykgrpcadapter/pkg/adapter"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
 	"testing"
@@ -47,19 +48,19 @@ func TestCheck(t *testing.T) {
 		nil,
 		adapter_integration.Scenario{
 			Setup: func() (ctx interface{}, err error) {
-				pServer, err := NewTykGrpcAdapter("")
+				pServer, err := adapter.NewTykGrpcAdapter("")
 				if err != nil {
 					return nil, err
 				}
 				go func() {
-					pServer.Run(shutdown)
+					Run(shutdown)
 					_ = <-shutdown
 				}()
 				return pServer, nil
 			},
 			Teardown: func(ctx interface{}) {
-				s := ctx.(Server)
-				s.Close()
+				s := ctx.(adapter.Server)
+				Close()
 			},
 			ParallelCalls: []adapter_integration.Call{
 				{
@@ -73,12 +74,12 @@ func TestCheck(t *testing.T) {
 				},
 			},
 			GetConfig: func(ctx interface{}) ([]string, error) {
-				s := ctx.(Server)
+				s := ctx.(adapter.Server)
 				return []string{
 					// CRs for built-in templates (authorization is what we need for this test)
 					// are automatically added by the integration test framework.
 					string(adptCrBytes),
-					strings.Replace(operatorCfg, "{ADDRESS}", s.Addr(), 1),
+					strings.Replace(operatorCfg, "{ADDRESS}", Addr(), 1),
 				}, nil
 			},
 			Want: `

@@ -3,20 +3,21 @@
 // supported template names (auth in this case), and whether it is session or no-session based.
 //go:generate $REPO_ROOT/bin/mixer_codegen.sh -a mixer/adapter/tykgrpcadapter/config/config.proto -x "-s=false -n tykgrpcadapter -t authorization"
 
-package tykgrpcadapter
+package adapter
 
 import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"google.golang.org/grpc/credentials"
+	"io"
 	"io/ioutil"
 	"istio.io/istio/mixer/pkg/adapter"
 	"net"
 	"net/http"
 	"os"
-
-	"google.golang.org/grpc/credentials"
+	"time"
 
 	"istio.io/istio/mixer/pkg/status"
 	"istio.io/istio/mixer/template/authorization"
@@ -46,7 +47,22 @@ type (
 
 // TODO: Utilise analytics template to send analytics record directly to Redis so we get Istio metrics in Tyk Dashboard
 
-var _ authorization.HandleAuthorizationServiceServer = &TykGrpcAdapter{}
+var(
+ _ authorization.HandleAuthorizationServiceServer = &TykGrpcAdapter{}
+ client *http.Client
+)
+
+
+func init() {
+	client = createHTTPClient()
+}
+
+func createHTTPClient() *http.Client {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	return client
+}
 
 // HandleAuthorization handles receiving an auth header from mixer and sending it to a Tyk Gateway for policy validation
 // TODO The API Key can be a valid JWT with a corresponding API setup in Tyk
@@ -87,7 +103,6 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 
 	//send auth key to gateway on the service path
 	// TODO: Mutual TLS for connection to Tyk Gateway
-	client := &http.Client{}
 	log.Infof("Calling Tyk api on: %s", cfg.GetGatewayUrl()+ "/" + r.Instance.Action.Service + r.Instance.Action.Path)
 
 	req, _ := http.NewRequest("GET",
@@ -102,17 +117,23 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 			Status: status.WithPermissionDenied("Error calling Tyk Gateway"),
 		}, nil
 	}
+
+	defer resp.Body.Close()
+	_,_ = io.Copy(ioutil.Discard, resp.Body)
+
+
 	log.Infof("StatusCodeFromTyk: %v", resp.StatusCode)
+
 	//good request send back an ok
-	if resp.StatusCode == 200 {
+	if resp.StatusCode != 200 {
 		return &v1beta1.CheckResult{
-			Status: status.OK,
+			Status: status.WithPermissionDenied("Error Calling Tyk Gateway"),
 		}, nil
+
 	}
 	return &v1beta1.CheckResult{
-		Status: status.WithPermissionDenied("Error Calling Tyk Gateway"),
+		Status: status.OK,
 	}, nil
-
 }
 
 // Addr returns the listening address of the server
