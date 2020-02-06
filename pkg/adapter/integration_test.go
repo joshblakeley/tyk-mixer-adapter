@@ -4,30 +4,13 @@ import (
 	"github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 	"io/ioutil"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
+	"net/http"
 	"strings"
 	"testing"
 )
 
 
 func TestCheck(t *testing.T) {
-
-	////setup Tyk Server and API
-	//defer tyk.ResetTestConfig()
-	//ts := tyk.StartTest()
-	//defer ts.Close()
-	//
-	//tyk.BuildAndLoadAPI(func(spec *tyk.APISpec) {
-	//	spec.Name = "test"
-	//	spec.APIID = "test"
-	//	spec.Proxy.ListenPath = "/mixerapi/"
-	//	spec.UseKeylessAccess = false
-	//})
-	////create valid auth token and pass to mixer client below
-	//_, knownKey := ts.CreateSession(func(s *user.SessionState) {
-	//	s.AccessRights = map[string]user.AccessDefinition{"test": {
-	//		APIID: "test",
-	//	}}
-	//})
 
 	adptCrBytes, err := ioutil.ReadFile("../config/tykgrpcadapter.yaml")
 	if err != nil {
@@ -46,7 +29,7 @@ func TestCheck(t *testing.T) {
 		nil,
 		adapter_integration.Scenario{
 			Setup: func() (ctx interface{}, err error) {
-				pServer, err := adapter.NewTykGrpcAdapter("")
+				pServer, err := NewTykGrpcAdapter("")
 				if err != nil {
 					return nil, err
 				}
@@ -100,6 +83,28 @@ func TestCheck(t *testing.T) {
 	)
 }
 
+func tykMockHandler() http.HandlerFunc {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		switch {
+
+		case strings.HasPrefix(r.URL.Path, "/notfound"):
+			w.Write([]byte(`Not found`))
+			w.WriteHeader(http.StatusNotFound)
+
+		case strings.HasPrefix(r.URL.Path, "/ratelimited"):
+
+
+		case strings.HasPrefix(r.URL.Path, "/quotalimited"):
+
+
+		case strings.HasPrefix(r.URL.Path, "/ok"):
+			w.Write([]byte(`{"status": "ok"}`))
+			w.WriteHeader(http.StatusOK)
+		}
+	})
+}
 
 
 

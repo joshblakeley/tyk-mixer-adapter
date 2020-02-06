@@ -179,9 +179,8 @@ func getServerTLSOption(credential, privateKey, caCertificate string) (grpc.Serv
 	return grpc.Creds(credentials.NewTLS(tlsConfig)), nil
 }
 
-// NewTykGrpcAdapter creates a new adapter that listens at port 5000
-// TODO: port and probally some other things should be configurable from config
-func NewTykGrpcAdapter(addr string) (Server, error) {
+// TODO: extend config inputs
+func NewTykGrpcAdapter(addr string) (*TykGrpcAdapter, error) {
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s", ":9999"))
 	if err != nil {
