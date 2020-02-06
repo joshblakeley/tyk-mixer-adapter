@@ -94,12 +94,6 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 		}, nil
 	}
 
-	//log.Debugf("Actions: Method: %v\n Namespace: %v\n Destination Service: %v\n Path: %v",
-	//	r.Instance.Action.Method,
-	//	r.Instance.Action.Namespace,
-	//	r.Instance.Action.Service,
-	//	r.Instance.Action.Path)
-
 	//send auth key to gateway on the service path
 	// TODO: Mutual TLS for connection to Tyk Gateway
 	log.Infof("Calling Tyk api on: %s", cfg.GetGatewayUrl()+ "/" + r.Instance.Action.Service + r.Instance.Action.Path)
@@ -123,7 +117,6 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 
 	log.Infof("StatusCodeFromTyk: %v", resp.StatusCode)
 
-	//good request send back an ok
 	if resp.StatusCode != 200 {
 		return &v1beta1.CheckResult{
 			Status: status.WithPermissionDenied("Error Calling Tyk Gateway"),
@@ -190,7 +183,7 @@ func getServerTLSOption(credential, privateKey, caCertificate string) (grpc.Serv
 // TODO: port and probally some other things should be configurable from config
 func NewTykGrpcAdapter(addr string) (Server, error) {
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s", ":5000"))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s", ":9999"))
 	if err != nil {
 		return nil, fmt.Errorf("unable to listen on socket: %v", err)
 	}

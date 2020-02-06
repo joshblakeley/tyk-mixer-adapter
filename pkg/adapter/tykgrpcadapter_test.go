@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"github.com/joshblakeley/tyk-mixer-adapter/pkg/adapter"
 	"io/ioutil"
 	adapter_integration "istio.io/istio/mixer/pkg/adapter/test"
 	"strings"
@@ -28,12 +29,12 @@ func TestCheck(t *testing.T) {
 	//	}}
 	//})
 
-	adptCrBytes, err := ioutil.ReadFile("config/tykgrpcadapter.yaml")
+	adptCrBytes, err := ioutil.ReadFile("../config/tykgrpcadapter.yaml")
 	if err != nil {
 		t.Fatalf("could not read file: %v", err)
 	}
 
-	operatorCfgBytes, err := ioutil.ReadFile("testdata/sample_operator_cfg.yaml")
+	operatorCfgBytes, err := ioutil.ReadFile("../testdata/sample_operator_cfg.yaml")
 	if err != nil {
 		t.Fatalf("could not read file: %v", err)
 	}
@@ -45,7 +46,7 @@ func TestCheck(t *testing.T) {
 		nil,
 		adapter_integration.Scenario{
 			Setup: func() (ctx interface{}, err error) {
-				pServer, err := NewTykGrpcAdapter("")
+				pServer, err := adapter.NewTykGrpcAdapter("")
 				if err != nil {
 					return nil, err
 				}
@@ -56,7 +57,7 @@ func TestCheck(t *testing.T) {
 				return pServer, nil
 			},
 			Teardown: func(ctx interface{}) {
-				s := ctx.(Server)
+				s := ctx.(adapter.Server)
 				s.Close()
 			},
 			ParallelCalls: []adapter_integration.Call{
@@ -71,7 +72,7 @@ func TestCheck(t *testing.T) {
 				},
 			},
 			GetConfig: func(ctx interface{}) ([]string, error) {
-				s := ctx.(Server)
+				s := ctx.(adapter.Server)
 				return []string{
 					// CRs for built-in templates (authorization is what we need for this test)
 					// are automatically added by the integration test framework.
