@@ -58,6 +58,8 @@ github.com/antlr/antlr4 v0.0.0-20190223165740-dade65a895c2 h1:Q1TGw0wvj6lqZQ4/CM
 github.com/antlr/antlr4 v0.0.0-20190223165740-dade65a895c2/go.mod h1:T7PbCXFs94rrTttyxjbyT5+/1V8T2TYDejxUfHJjw1Y=
 github.com/aokoli/goutils v1.0.1/go.mod h1:SijmP0QR8LtwsmDs8Yii5Z/S4trXFGFC2oO5g9DP+DQ=
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
+github.com/apigee/istio-mixer-adapter v0.0.0-20191121010352-9653d3a02c39 h1:sbAs13ohnt0DFyqOooLEvZT8onnGmfxhp2tWmGo8XYg=
+github.com/apigee/istio-mixer-adapter v0.0.0-20191121010352-9653d3a02c39/go.mod h1:pJuyXiobbucu3SATboMqF6dGmq9zYUdGz2pIjjT4jB8=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da/go.mod h1:Q73ZrmVTwzkszR9V5SSuryQ31EELlFMUz1kKyl939pY=
@@ -371,6 +373,10 @@ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/lestrrat-go/jwx v0.9.0/go.mod h1:iEoxlYfZjvoGpuWwxUz+eR5e6KTJGsaRcy/YNA/UnBk=
+github.com/lestrrat/go-jwx v0.0.0-20180221005942-b7d4802280ae h1:XoMPFIGibcPKgLrgIxzif36Zs/2yOEeGYc/7nitjzNM=
+github.com/lestrrat/go-jwx v0.0.0-20180221005942-b7d4802280ae/go.mod h1:T+yHdCP6MJKtzoVQMHvVCeam5VFwX1+rWzn5zZgKYMI=
+github.com/lestrrat/go-pdebug v0.0.0-20180220043741-569c97477ae8 h1:ttJD8hTqvrPEUBoAG5hJKbDOJ84u7zmbnZsUL4V9430=
+github.com/lestrrat/go-pdebug v0.0.0-20180220043741-569c97477ae8/go.mod h1:VXFH11P7fHn2iPBsfSW1JacR59rttTcafJnwYcI/IdY=
 github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de/go.mod h1:zAbeS9B/r2mtpb6U+EI2rYA5OAXxsYw6wTamcNW+zcE=
 github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
 github.com/lyft/protoc-gen-validate v0.0.13/go.mod h1:XbGvPuh87YZc5TdIa2/I4pLk0QoUACkjt2znoq26NVQ=
@@ -825,6 +831,7 @@ istio.io/gogo-genproto v0.0.0-20200122005450-9b171d92064b h1:IGfxOYlHvdE5UeSCGvO
 istio.io/gogo-genproto v0.0.0-20200122005450-9b171d92064b/go.mod h1:OzpAts7jljZceG4Vqi5/zXy/pOg1b209T3jb7Nv5wIs=
 istio.io/istio v0.0.0-20200205160822-b2d580ebb3a8 h1:Wr63ZuCyj0BRPY4km+9M9Oo1cC2RWxFoYJ3tzEUeq7w=
 istio.io/istio v0.0.0-20200205160822-b2d580ebb3a8/go.mod h1:K6eyY2SZ5xQRH0T56Ay0/ZqDDKcwLIV6q9JOt7e6E/U=
+istio.io/istio v0.0.0-20200206033523-216ce9b252ed h1:l/cJRY0gduWhJaKmJJ5WOa4NRsFSfF6SV0HxpPhIQWU=
 istio.io/pkg v0.0.0-20200131182711-9ba13e0e34bb h1:ZEOEfPpz4ooW3lhX5qi+XA6dTO1Mb72EFaRniUb6Mvc=
 istio.io/pkg v0.0.0-20200131182711-9ba13e0e34bb/go.mod h1:pwGaxLUDLobzL/WvWV94z72LvBbB1dr2UUUyPuasfIU=
 k8s.io/api v0.0.0-20190918155943-95b840bb6a1f/go.mod h1:uWuOHnjmNrtQomJrvEBg0c0HRNyQ+8KTEERVsK0PW48=

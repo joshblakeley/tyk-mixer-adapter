@@ -20,7 +20,7 @@ import (
 func TestGRPCAdapter_HandleAuthorization(t *testing.T) {
 	ctx := context.Background()
 
-	ts := httptest.NewServer(tykMockHandler())
+	ts := httptest.NewServer(adapter.TykMockHandler())
 	defer ts.Close()
 	baseURL, err := url.Parse(ts.URL)
 	if err != nil {

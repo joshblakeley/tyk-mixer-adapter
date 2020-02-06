@@ -30,6 +30,7 @@ import (
 )
 
 type (
+
 	// Server is basic server interface
 	Server interface {
 		Addr() string
@@ -38,16 +39,17 @@ type (
 	}
 
 	// TykGrpcAdapter supports authorization template.
-	TykGrpcAdapter struct {
+	TykGRPCAdapter struct {
 		listener net.Listener
 		server   *grpc.Server
 	}
+
 )
 
 // TODO: Utilise analytics template to send analytics record directly to Redis so we get Istio metrics in Tyk Dashboard
 
 var(
- _ authorization.HandleAuthorizationServiceServer = &TykGrpcAdapter{}
+	_ authorization.HandleAuthorizationServiceServer = &TykGRPCAdapter{}
  client *http.Client
 )
 
@@ -67,7 +69,7 @@ func createHTTPClient() *http.Client {
 // TODO The API Key can be a valid JWT with a corresponding API setup in Tyk
 // TODO see: https://tyk.io/docs/basic-config-and-security/security/your-apis/json-web-tokens/
 // The key may be a plain bearer token but it needs to have been issued the Tyk Management Dashboard
-func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorization.HandleAuthorizationRequest) (*v1beta1.CheckResult, error) {
+func (s *TykGRPCAdapter) HandleAuthorization(ctx context.Context, r *authorization.HandleAuthorizationRequest) (*v1beta1.CheckResult, error) {
 	//get tyk gateway url from config
 	log.Infof("received request %v\n", *r)
 
@@ -129,17 +131,17 @@ func (s *TykGrpcAdapter) HandleAuthorization(ctx context.Context, r *authorizati
 }
 
 // Addr returns the listening address of the server
-func (s *TykGrpcAdapter) Addr() string {
+func (s *TykGRPCAdapter) Addr() string {
 	return s.listener.Addr().String()
 }
 
 // Run starts the server run
-func (s *TykGrpcAdapter) Run(shutdown chan error) {
+func (s *TykGRPCAdapter) Run(shutdown chan error) {
 	shutdown <- s.server.Serve(s.listener)
 }
 
 // Close gracefully shuts down the server; used for testing
-func (s *TykGrpcAdapter) Close() error {
+func (s *TykGRPCAdapter) Close() error {
 	if s.server != nil {
 		s.server.GracefulStop()
 	}
@@ -180,13 +182,13 @@ func getServerTLSOption(credential, privateKey, caCertificate string) (grpc.Serv
 }
 
 // TODO: extend config inputs
-func NewTykGrpcAdapter(addr string) (*TykGrpcAdapter, error) {
+func NewTykGrpcAdapter(addr string) (*TykGRPCAdapter, error) {
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s", ":9999"))
 	if err != nil {
 		return nil, fmt.Errorf("unable to listen on socket: %v", err)
 	}
-	s := &TykGrpcAdapter{
+	s := &TykGRPCAdapter{
 		listener: listener,
 	}
 	fmt.Printf("listening on \"%v\"\n", s.Addr())

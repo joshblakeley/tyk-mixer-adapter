@@ -7,9 +7,9 @@ metadata:
 spec: 
   adapter: tykgrpcadapter
   connection: 
-    address: "localhost:9999"
+    address: "{ADAPTER_URL}"
   params: 
-    gateway_url: "http(s)://{GATEWAY_URL}:{GATEWAY_PORT}"
+    gateway_url: {TYK_URL}
 
 ---
 apiVersion: "config.istio.io/v1alpha2"
