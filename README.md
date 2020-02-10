@@ -10,7 +10,9 @@ Tyk API Gateways can then define access control, rate limiting and quotas for se
 
 ## Istio Prerequsites
 
-* k8s cluster running any Istio (1.1+) sample app i.e.
+* k8s cluster running Istio (1.1+) 
+
+* sample app i.e.
   - [Helloworld](https://github.com/istio/istio/tree/master/samples/helloworld)
   - [Bookinfo](https://istio.io/docs/examples/bookinfo/)
 
@@ -55,8 +57,8 @@ spec:
   ports:
     - name: grpc
       protocol: TCP
-      port: 5000
-      targetPort: 5000
+      port: 9999
+      targetPort: 9999
   selector:
     app: tykgrpcadapter
 ---
@@ -81,7 +83,7 @@ spec:
           image: joshtyk/tyk-istio-adapter:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - containerPort: 9999
 ```
 
 `kubectl apply -f adapter_service.yaml`
